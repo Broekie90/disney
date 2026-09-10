@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wij gaan naar Disneyland Parijs! ✨</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night-1:#05041a;
+    --night-2:#160d3a;
+    --night-3:#3a1a63;
+    --gold:#f6d77c;
+    --gold-deep:#d4a23a;
+    --rose:#ff9ad9;
+    --lilac:#d9c6ff;
+    --ink:#0c0724;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    color:var(--lilac);
+    background:
+      radial-gradient(ellipse 120% 60% at 50% 110%, #5a2a8a 0%, transparent 60%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, var(--night-3) 0%, transparent 70%),
+      linear-gradient(180deg, var(--night-1) 0%, var(--night-2) 55%, var(--night-3) 100%);
+    background-attachment:fixed;
+    overflow-x:hidden;
+    min-height:100vh;
+    cursor:default;
+  }
+
+  /* ---------- lagen ---------- */
+  canvas.layer{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+  #sky{z-index:0}
+  #fx{z-index:3}
+  .moon{
+    position:fixed;top:7vh;right:9vw;width:min(110px,14vw);aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 40% 40%, #fff9e3, #f3e2a6 60%, #e7cd85);
+    box-shadow:0 0 40px 12px rgba(255,240,190,.35), 0 0 120px 40px rgba(255,230,160,.15);
+    z-index:1;pointer-events:none;
+  }
+  .moon::after{
+    content:'';position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(circle at 70% 55%, rgba(0,0,0,.08) 0 18%, transparent 20%),
+               radial-gradient(circle at 35% 70%, rgba(0,0,0,.07) 0 10%, transparent 12%);
+  }
+  .castle{
+    position:fixed;left:0;right:0;bottom:0;z-index:2;pointer-events:none;
+    width:100%;height:min(46vh,420px);
+  }
+  .castle svg{width:100%;height:100%;display:block}
+  .win{animation:winGlow 3.2s ease-in-out infinite}
+  .win:nth-child(2n){animation-delay:-1.1s}
+  .win:nth-child(3n){animation-delay:-2.2s}
+  @keyframes winGlow{0%,100%{opacity:.75}50%{opacity:1}}
+  .flag{transform-origin:0 100%;animation:wave 2.4s ease-in-out infinite}
+  @keyframes wave{0%,100%{transform:skewY(0deg)}50%{transform:skewY(-6deg)}}
+
+  /* ---------- hoekfiguren ---------- */
+  .fig{position:fixed;z-index:3;pointer-events:none;opacity:0;transition:opacity 1.4s ease 2.4s;filter:drop-shadow(0 0 16px rgba(246,215,124,.4))}
+  body.revealed .fig{opacity:1}
+  .fairy{top:6vh;left:3vw;width:clamp(76px,11vw,140px);animation:floaty 5s ease-in-out infinite}
+  .dragon{top:24vh;right:2vw;width:clamp(96px,14vw,180px);animation:flyy 7s ease-in-out infinite}
+  .unicorn{bottom:1vh;left:1vw;width:clamp(100px,15vw,190px);animation:trot 2.2s ease-in-out infinite}
+  .owl{bottom:74px;right:2vw;width:clamp(80px,11vw,140px);animation:hoot 4s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-18px) rotate(3deg)}}
+  @keyframes flyy{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-14px,-16px) rotate(-4deg)}50%{transform:translate(-6px,-30px) rotate(2deg)}75%{transform:translate(10px,-12px) rotate(4deg)}}
+  @keyframes trot{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes hoot{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .wing{transform-box:view-box;transform-origin:60px 78px;animation:flutter .55s ease-in-out infinite alternate}
+  @keyframes flutter{from{transform:scaleX(1)}to{transform:scaleX(.7)}}
+  .wandStar{transform-box:fill-box;transform-origin:center;animation:twinkle 1.2s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{transform:scale(1) rotate(0);opacity:1}50%{transform:scale(1.5) rotate(25deg);opacity:.75}}
+  .dWing{transform-box:fill-box;transform-origin:100% 100%;animation:flap .7s ease-in-out infinite alternate}
+  @keyframes flap{from{transform:rotate(0)}to{transform:rotate(-30deg)}}
+  .breath > *{transform-box:fill-box;transform-origin:center;animation:puff 1.9s ease-out infinite}
+  .breath > :nth-child(2){animation-delay:.6s}.breath > :nth-child(3){animation-delay:1.2s}
+  @keyframes puff{0%{opacity:0;transform:translate(0,0) scale(.3)}30%{opacity:1}100%{opacity:0;transform:translate(24px,-28px) scale(1.3)}}
+  .tail{transform-box:view-box;transform-origin:42px 80px;animation:swish 1.6s ease-in-out infinite alternate}
+  @keyframes swish{from{transform:rotate(-8deg)}to{transform:rotate(12deg)}}
+  .hornGlow{animation:hornPulse 2.2s ease-in-out infinite}
+  @keyframes hornPulse{0%,100%{opacity:.4}50%{opacity:1}}
+  .blink{transform-box:fill-box;transform-origin:center;animation:blink 4.6s infinite}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.06)}}
+  .bubble{transform-box:fill-box;transform-origin:center;animation:bub 2.4s ease-in infinite}
+  .bubble:nth-child(2){animation-delay:.8s}.bubble:nth-child(3){animation-delay:1.6s}
+  @keyframes bub{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(-26px)}}
+  .hatStar{transform-box:fill-box;transform-origin:center;animation:twinkle 2s ease-in-out infinite}
+  .hatStar:nth-child(2){animation-delay:.7s}
+
+  .butterfly{position:fixed;left:0;top:0;z-index:3;pointer-events:none;width:36px;opacity:0;filter:drop-shadow(0 0 8px rgba(255,154,217,.8))}
+  body.revealed .b1{opacity:1;animation:flyB1 26s ease-in-out infinite}
+  body.revealed .b2{opacity:1;animation:flyB2 32s ease-in-out infinite 4s}
+  @keyframes flyB1{0%{transform:translate(-6vw,62vh) rotate(-10deg)}25%{transform:translate(24vw,38vh) rotate(8deg)}50%{transform:translate(52vw,58vh) rotate(-6deg)}75%{transform:translate(78vw,28vh) rotate(10deg)}100%{transform:translate(106vw,48vh) rotate(-8deg)}}
+  @keyframes flyB2{0%{transform:translate(106vw,30vh) scaleX(-1)}30%{transform:translate(70vw,52vh) scaleX(-1) rotate(8deg)}60%{transform:translate(38vw,26vh) scaleX(-1) rotate(-8deg)}100%{transform:translate(-6vw,44vh) scaleX(-1)}}
+  .bwL{transform-box:fill-box;transform-origin:right center;animation:bflap .28s ease-in-out infinite alternate}
+  .bwR{transform-box:fill-box;transform-origin:left center;animation:bflap .28s ease-in-out infinite alternate}
+  @keyframes bflap{from{transform:scaleX(1)}to{transform:scaleX(.25)}}
+
+  @media (max-width:640px){
+    .fairy{top:2vh;width:64px}.dragon{top:14vh;width:90px}.unicorn{width:92px}.owl{width:74px;bottom:66px}
+  }
+
+  /* ---------- noorderlicht ---------- */
+  .aurora{position:fixed;left:-10%;right:-10%;top:-10%;height:60vh;z-index:1;pointer-events:none;filter:blur(46px);opacity:.45;mix-blend-mode:screen}
+  .aurora span{position:absolute;left:0;right:0;top:0;height:42%;border-radius:50%;
+    background:linear-gradient(90deg,transparent 0%,#6a2fd6 25%,#ff5fc8 50%,#3ec6ff 75%,transparent 100%);
+    animation:aur 16s ease-in-out infinite alternate}
+  .aurora span:nth-child(2){top:28%;height:36%;animation-duration:22s;animation-delay:-7s;
+    background:linear-gradient(90deg,transparent 0%,#3ec6ff 20%,#8be9a8 45%,#c9a7ff 70%,transparent 100%)}
+  .aurora span:nth-child(3){top:50%;height:30%;animation-duration:19s;animation-delay:-12s;opacity:.7;
+    background:linear-gradient(90deg,transparent 0%,#ff9ad9 30%,#f6d77c 55%,#6a2fd6 80%,transparent 100%)}
+  @keyframes aur{from{transform:translateX(-7%) skewY(-4deg) scaleY(1)}to{transform:translateX(7%) skewY(4deg) scaleY(1.35)}}
+
+  /* ---------- lampionnen ---------- */
+  .lanterns i{position:fixed;bottom:-70px;left:var(--x);width:18px;height:26px;border-radius:6px 6px 9px 9px;z-index:2;pointer-events:none;
+    background:radial-gradient(circle at 50% 60%,#fff1c2,#ffb04a 60%,#c9611d);
+    box-shadow:0 0 20px 7px rgba(255,180,80,.45);opacity:0;
+    animation:lantern var(--t) linear infinite var(--d);animation-play-state:paused}
+  body.revealed .lanterns i{animation-play-state:running}
+  .lanterns i::before{content:'';position:absolute;top:-6px;left:5px;width:8px;height:6px;background:#8a4a1a;border-radius:2px}
+  .lanterns i::after{content:'';position:absolute;inset:4px 3px;border-radius:4px;border:1px solid rgba(160,70,20,.35)}
+  @keyframes lantern{0%{transform:translate(0,0) rotate(0);opacity:0}6%{opacity:.95}50%{transform:translate(var(--sway),-58vh) rotate(4deg)}100%{transform:translate(calc(var(--sway) * -.6),-118vh) rotate(-3deg);opacity:0}}
+
+  /* ---------- lichtbundels kasteel ---------- */
+  .beam{transform-box:view-box;transform-origin:600px 330px;mix-blend-mode:screen;animation:sweep 11s ease-in-out infinite alternate}
+  .beam:nth-child(2){animation-duration:14s;animation-delay:-6s;animation-direction:alternate-reverse}
+  .beam:nth-child(3){animation-duration:9s;animation-delay:-3s}
+  @keyframes sweep{from{transform:rotate(-38deg)}to{transform:rotate(38deg)}}
+
+  /* ---------- toverkaarten ---------- */
+  .who{font-family:'Cinzel Decorative',serif;font-size:clamp(16px,2.6vw,24px);color:var(--gold);letter-spacing:.08em;margin-top:56px}
+  .cards{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-top:22px;perspective:1000px}
+  .ncard{
+    --c:#f6d77c;position:relative;width:clamp(130px,20vw,170px);padding:18px 12px 16px;border-radius:18px;cursor:pointer;
+    font-family:inherit;color:#fff;text-align:center;
+    background:linear-gradient(160deg,rgba(60,32,110,.75),rgba(18,10,50,.9));
+    border:1.5px solid color-mix(in srgb,var(--c) 70%,transparent);
+    box-shadow:0 0 22px color-mix(in srgb,var(--c) 30%,transparent),0 14px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.15);
+    transition:transform .35s ease,box-shadow .35s ease;
+  }
+  .ncard::before{content:'✦';position:absolute;top:6px;left:10px;color:var(--c);font-size:12px;opacity:.8}
+  .ncard::after{content:'✦';position:absolute;bottom:6px;right:10px;color:var(--c);font-size:12px;opacity:.8}
+  .ncard:hover,.ncard:focus-visible{transform:translateY(-8px) rotateX(6deg) scale(1.04);box-shadow:0 0 42px color-mix(in srgb,var(--c) 60%,transparent),0 22px 40px rgba(0,0,0,.5);outline:none}
+  .ncard .icon{display:block;font-size:clamp(34px,5vw,46px);filter:drop-shadow(0 0 12px var(--c));animation:beat 3s ease-in-out infinite}
+  .ncard .nm{display:block;font-family:'Great Vibes',cursive;font-size:clamp(30px,4.5vw,42px);color:var(--c);text-shadow:0 0 16px color-mix(in srgb,var(--c) 70%,transparent);line-height:1.1;margin-top:4px}
+  .ncard .role{display:block;font-style:italic;font-size:clamp(14px,1.8vw,17px);color:var(--lilac);margin-top:4px;line-height:1.25}
+  .ncard.grand{width:clamp(200px,32vw,300px)}
+  .ncard.pop{animation:cardPop .5s ease}
+  @keyframes cardPop{0%{transform:scale(1)}40%{transform:scale(1.12) rotate(-2deg)}100%{transform:scale(1)}}
+
+  /* ---------- intro (sprookjesboek) ---------- */
+  #intro{
+    position:fixed;inset:0;z-index:50;display:grid;place-items:center;text-align:center;
+    background:radial-gradient(ellipse at center, rgba(40,18,80,.92), rgba(5,4,26,.98));
+    transition:opacity 1.2s ease, transform 1.2s ease;padding:24px;
+  }
+  #intro.open{opacity:0;transform:scale(1.15);pointer-events:none}
+  .book{
+    max-width:640px;padding:clamp(28px,5vw,56px) clamp(22px,5vw,48px);
+    border:2px solid rgba(246,215,124,.55);border-radius:22px;position:relative;
+    background:linear-gradient(160deg, rgba(58,26,99,.7), rgba(22,13,58,.85));
+    box-shadow:0 0 60px rgba(246,215,124,.15), inset 0 0 40px rgba(0,0,0,.4);
+  }
+  .book::before,.book::after{
+    content:'✦';position:absolute;color:var(--gold);font-size:22px;
+  }
+  .book::before{top:10px;left:14px}
+  .book::after{bottom:8px;right:14px}
+  .book .once{font-family:'Great Vibes',cursive;font-size:clamp(44px,9vw,84px);color:var(--gold);
+    text-shadow:0 0 22px rgba(246,215,124,.55);line-height:1.1}
+  .book p{font-style:italic;font-size:clamp(18px,2.6vw,24px);margin:14px 0 30px;color:var(--lilac)}
+  .btn{
+    font-family:'Cinzel Decorative',serif;font-weight:700;font-size:clamp(14px,2.2vw,18px);letter-spacing:.06em;
+    color:var(--ink);background:linear-gradient(180deg,#fff0b8,var(--gold) 50%,var(--gold-deep));
+    border:none;border-radius:999px;padding:16px 34px;cursor:pointer;
+    box-shadow:0 0 30px rgba(246,215,124,.45), 0 8px 24px rgba(0,0,0,.4);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn:hover,.btn:focus-visible{transform:translateY(-2px) scale(1.03);box-shadow:0 0 44px rgba(246,215,124,.7),0 12px 28px rgba(0,0,0,.45);outline:none}
+  .btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+  /* ---------- inhoud ---------- */
+  main{
+    position:relative;z-index:4;max-width:980px;margin:0 auto;
+    padding:clamp(56px,10vh,110px) 20px calc(min(46vh,420px) + 40px);
+    text-align:center;
+  }
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity 1.1s ease,transform 1.1s ease}
+  body.revealed .reveal{opacity:1;transform:none}
+  body.revealed .reveal:nth-child(1){transition-delay:.2s}
+  body.revealed .reveal:nth-child(2){transition-delay:.6s}
+  body.revealed .reveal:nth-child(3){transition-delay:1s}
+  body.revealed .reveal:nth-child(4){transition-delay:1.5s}
+  body.revealed .reveal:nth-child(5){transition-delay:1.8s}
+  body.revealed .reveal:nth-child(6){transition-delay:2.2s}
+  body.revealed .reveal:nth-child(7){transition-delay:2.6s}
+
+  .greeting{
+    font-family:'Great Vibes',cursive;font-size:clamp(40px,7vw,78px);color:var(--rose);
+    text-shadow:0 0 26px rgba(255,154,217,.55);line-height:1.1;
+  }
+  h1{
+    font-family:'Cinzel Decorative',serif;font-weight:900;font-size:clamp(24px,4.6vw,48px);
+    line-height:1.25;margin:18px auto 34px;max-width:15ch;
+    background:linear-gradient(90deg,#fff3c4 0%,var(--gold) 30%,#fff8dc 50%,var(--gold) 70%,#fff3c4 100%);
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shimmer 6s linear infinite;
+    filter:drop-shadow(0 0 16px rgba(246,215,124,.35));
+  }
+  @keyframes shimmer{to{background-position:200% center}}
+
+  .countdown{display:flex;justify-content:center;gap:clamp(10px,2.6vw,28px);flex-wrap:wrap;perspective:900px}
+  .unit{display:flex;flex-direction:column;align-items:center}
+  .card{
+    position:relative;width:clamp(66px,15vw,128px);height:clamp(84px,18vw,156px);border-radius:16px;
+    display:grid;place-items:center;
+    background:linear-gradient(180deg,#33206b 0%,#1c1046 50%,#120a33 100%);
+    border:1px solid rgba(246,215,124,.55);
+    box-shadow:0 0 34px rgba(246,215,124,.16), 0 18px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.18);
+    font-family:'Cinzel Decorative',serif;font-weight:700;font-size:clamp(34px,8vw,74px);
+    color:#ffe9a6;text-shadow:0 0 18px rgba(255,220,130,.6);
+    transform-style:preserve-3d;
+  }
+  .card::after{content:'';position:absolute;left:6px;right:6px;top:50%;height:1px;background:rgba(0,0,0,.5);box-shadow:0 1px 0 rgba(255,255,255,.08)}
+  .card.tick{animation:tick .55s ease}
+  @keyframes tick{0%{transform:rotateX(0)}45%{transform:rotateX(-28deg);filter:brightness(1.7)}100%{transform:rotateX(0)}}
+  .label{font-style:italic;font-size:clamp(16px,2.2vw,22px);color:var(--lilac);margin-top:10px;letter-spacing:.06em}
+
+  .tagline{font-size:clamp(22px,3.4vw,34px);font-style:italic;margin:38px auto 8px;max-width:26ch;color:#fff;text-shadow:0 0 18px rgba(255,255,255,.25)}
+  .when{font-family:'Cinzel Decorative',serif;font-size:clamp(14px,2vw,19px);color:var(--gold);letter-spacing:.12em}
+
+  .frame{
+    position:relative;margin:46px auto 0;max-width:820px;padding:12px;border-radius:18px;
+    background:linear-gradient(135deg,#fff0b8,var(--gold-deep) 30%,#fff2c2 50%,var(--gold-deep) 75%,#ffe9a6);
+    box-shadow:0 0 50px rgba(246,215,124,.35), 0 30px 60px rgba(0,0,0,.55);
+  }
+  .frame::before{
+    content:'';position:absolute;inset:5px;border:2px solid rgba(90,50,10,.55);border-radius:14px;pointer-events:none;
+  }
+  .frame .corner{position:absolute;font-size:30px;color:#5a3208;line-height:1;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+  .corner.tl{top:-6px;left:-4px}.corner.tr{top:-6px;right:-4px}.corner.bl{bottom:-6px;left:-4px}.corner.br{bottom:-6px;right:-4px}
+  .video{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000}
+  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .poster{position:absolute;inset:0;display:grid;place-items:center;text-decoration:none;color:#fff}
+  .poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;transition:transform .6s ease,opacity .3s ease}
+  .poster:hover img{transform:scale(1.04);opacity:1}
+  .poster .play{
+    position:relative;width:clamp(70px,12vw,110px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;
+    font-size:clamp(28px,5vw,44px);color:var(--ink);padding-left:6px;
+    background:linear-gradient(180deg,#fff0b8,var(--gold) 50%,var(--gold-deep));
+    box-shadow:0 0 40px rgba(246,215,124,.7),0 10px 30px rgba(0,0,0,.5);
+    animation:beat 2s ease-in-out infinite;
+  }
+  .poster .playText{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-family:'Cinzel Decorative',serif;font-size:clamp(13px,2vw,18px);color:var(--gold);text-shadow:0 0 12px rgba(0,0,0,.9)}
+  .poster:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+  .caption{margin-top:14px;font-style:italic;font-size:clamp(16px,2vw,20px);color:var(--lilac)}
+
+  .thanks{margin-top:70px}
+  .thanks .big{
+    font-family:'Great Vibes',cursive;font-size:clamp(44px,8vw,92px);color:var(--rose);
+    text-shadow:0 0 30px rgba(255,154,217,.6);line-height:1.1;
+  }
+  .thanks .sub{font-size:clamp(18px,2.6vw,26px);font-style:italic;margin-top:8px;color:#fff}
+  .heart{
+    display:inline-block;background:none;border:none;cursor:pointer;font-size:clamp(54px,8vw,84px);
+    margin-top:16px;animation:beat 1.6s ease-in-out infinite;filter:drop-shadow(0 0 18px rgba(255,120,190,.7));
+    transition:transform .2s ease;
+  }
+  .heart:hover{transform:scale(1.1)}
+  .heart:focus-visible{outline:3px solid var(--gold);outline-offset:6px;border-radius:50%}
+  @keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.12)}28%{transform:scale(1)}42%{transform:scale(1.1)}70%{transform:scale(1)}}
+  .hint{margin-top:10px;font-size:16px;font-style:italic;color:rgba(217,198,255,.7)}
+
+  .floatheart{position:fixed;z-index:6;pointer-events:none;font-size:28px;animation:rise 2.6s ease-out forwards}
+  @keyframes rise{0%{transform:translate(0,0) scale(.6);opacity:1}100%{transform:translate(var(--dx),-70vh) scale(1.3) rotate(var(--rot));opacity:0}}
+
+  .toolbar{position:fixed;right:18px;bottom:18px;z-index:10;display:flex;gap:10px;opacity:0;transition:opacity .8s ease 2.8s}
+  body.revealed .toolbar{opacity:1}
+  .tbtn{
+    font-family:'Cinzel Decorative',serif;font-weight:700;font-size:13px;letter-spacing:.05em;
+    color:var(--ink);background:linear-gradient(180deg,#fff0b8,var(--gold) 50%,var(--gold-deep));
+    border:none;border-radius:999px;padding:12px 18px;cursor:pointer;
+    box-shadow:0 0 24px rgba(246,215,124,.5), 0 8px 20px rgba(0,0,0,.45);transition:transform .2s ease;
+  }
+  .tbtn:hover{transform:translateY(-2px) scale(1.04)}
+  .tbtn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  .tbtn.on{background:linear-gradient(180deg,#ffd6ef,var(--rose) 50%,#c94b9a);color:#2a0a22}
+
+  .arrived{font-family:'Cinzel Decorative',serif;font-size:clamp(28px,6vw,64px);color:var(--gold);text-shadow:0 0 30px rgba(246,215,124,.7);display:none}
+  body.arrived .countdown{display:none}
+  body.arrived .arrived{display:block}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important}
+    .reveal{opacity:1;transform:none}
+    .toolbar{opacity:1}
+    .aurora,.lanterns{display:none}
+  }
+  @media (max-width:640px){
+    .toolbar{left:50%;right:auto;transform:translateX(-50%)}
+    .owl{bottom:70px}
+  }
+</style>
+</head>
+<body>
+
+<div id="intro" role="dialog" aria-labelledby="introTitle">
+  <div class="book">
+    <div class="once" id="introTitle">Er was eens…</div>
+    <p>een geheim sprookje voor Lis, Daav, Fabian en Rome.<br>Durf jij het te openen?</p>
+    <button class="btn" id="openBook">✨ Open het sprookje ✨</button>
+  </div>
+</div>
+
+<canvas id="sky" class="layer" aria-hidden="true"></canvas>
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="lanterns" aria-hidden="true">
+  <i style="--x:8vw;--t:24s;--d:0s;--sway:40px"></i>
+  <i style="--x:22vw;--t:30s;--d:-9s;--sway:-30px"></i>
+  <i style="--x:36vw;--t:27s;--d:-17s;--sway:50px"></i>
+  <i style="--x:58vw;--t:33s;--d:-4s;--sway:-45px"></i>
+  <i style="--x:72vw;--t:26s;--d:-13s;--sway:35px"></i>
+  <i style="--x:88vw;--t:29s;--d:-21s;--sway:-40px"></i>
+  <i style="--x:47vw;--t:36s;--d:-27s;--sway:25px"></i>
+</div>
+<div class="moon" aria-hidden="true"></div>
+<canvas id="fx" class="layer" aria-hidden="true"></canvas>
+
+<div class="castle" aria-hidden="true">
+  <svg viewBox="0 0 1200 420" preserveAspectRatio="xMidYMax meet">
+    <defs>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#f1dcff"/><stop offset="1" stop-color="#a97fd6"/>
+      </linearGradient>
+      <linearGradient id="wallDark" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#cfb2ef"/><stop offset="1" stop-color="#7d57b3"/>
+      </linearGradient>
+      <linearGradient id="roofP" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#8f66e6"/><stop offset="1" stop-color="#3d1f80"/>
+      </linearGradient>
+      <linearGradient id="roofR" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ff9bd3"/><stop offset="1" stop-color="#b8459a"/>
+      </linearGradient>
+      <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2a1656"/><stop offset="1" stop-color="#120a30"/>
+      </linearGradient>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="cglow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <!-- heuvel -->
+    <path d="M0,420 L0,335 C250,300 420,320 600,318 C780,316 950,300 1200,335 L1200,420 Z" fill="url(#hill)"/>
+    <!-- lichtbundels -->
+    <defs>
+      <linearGradient id="beamP" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff9ad9" stop-opacity=".45"/><stop offset="1" stop-color="#ff9ad9" stop-opacity="0"/></linearGradient>
+      <linearGradient id="beamB" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#8be9ff" stop-opacity=".4"/><stop offset="1" stop-color="#8be9ff" stop-opacity="0"/></linearGradient>
+      <linearGradient id="beamG" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#f6d77c" stop-opacity=".4"/><stop offset="1" stop-color="#f6d77c" stop-opacity="0"/></linearGradient>
+    </defs>
+    <g>
+      <polygon class="beam" points="600,330 548,-120 652,-120" fill="url(#beamP)"/>
+      <polygon class="beam" points="600,330 560,-120 640,-120" fill="url(#beamB)"/>
+      <polygon class="beam" points="600,330 570,-120 630,-120" fill="url(#beamG)"/>
+    </g>
+    <!-- gloed achter kasteel -->
+    <ellipse cx="600" cy="330" rx="330" ry="120" fill="#7a3fc9" opacity=".25" filter="url(#cglow)"/>
+
+    <!-- buitenmuren -->
+    <rect x="380" y="250" width="440" height="90" fill="url(#wallDark)"/>
+    <g fill="#cfb2ef">
+      <rect x="384" y="238" width="14" height="14"/><rect x="410" y="238" width="14" height="14"/><rect x="436" y="238" width="14" height="14"/>
+      <rect x="750" y="238" width="14" height="14"/><rect x="776" y="238" width="14" height="14"/><rect x="802" y="238" width="14" height="14"/>
+    </g>
+    <!-- buitenste torens -->
+    <rect x="360" y="200" width="46" height="140" fill="url(#wall)"/>
+    <polygon points="350,200 416,200 383,128" fill="url(#roofP)"/>
+    <rect x="794" y="200" width="46" height="140" fill="url(#wall)"/>
+    <polygon points="784,200 850,200 817,128" fill="url(#roofP)"/>
+
+    <!-- middentorens -->
+    <rect x="470" y="150" width="50" height="190" fill="url(#wall)"/>
+    <polygon points="458,150 532,150 495,66" fill="url(#roofR)"/>
+    <rect x="680" y="150" width="50" height="190" fill="url(#wall)"/>
+    <polygon points="668,150 742,150 705,66" fill="url(#roofR)"/>
+
+    <!-- hoofdgebouw -->
+    <rect x="520" y="185" width="160" height="155" fill="url(#wall)"/>
+    <g fill="#f1dcff">
+      <rect x="524" y="172" width="16" height="14"/><rect x="552" y="172" width="16" height="14"/><rect x="580" y="172" width="16" height="14"/>
+      <rect x="608" y="172" width="16" height="14"/><rect x="636" y="172" width="16" height="14"/><rect x="664" y="172" width="16" height="14"/>
+    </g>
+    <!-- grote toren -->
+    <rect x="570" y="70" width="60" height="120" fill="url(#wall)"/>
+    <polygon points="556,70 644,70 600,-4" fill="url(#roofP)"/>
+    <rect x="586" y="40" width="28" height="34" fill="url(#wall)"/>
+    <polygon points="580,40 620,40 600,8" fill="url(#roofR)"/>
+
+    <!-- vlaggen -->
+    <g stroke="#f6d77c" stroke-width="2">
+      <line x1="600" y1="8" x2="600" y2="-16"/><line x1="495" y1="66" x2="495" y2="44"/><line x1="705" y1="66" x2="705" y2="44"/>
+      <line x1="383" y1="128" x2="383" y2="108"/><line x1="817" y1="128" x2="817" y2="108"/>
+    </g>
+    <g fill="#ff9ad9">
+      <polygon class="flag" points="600,-16 626,-8 600,0"/>
+      <polygon class="flag" points="495,44 517,50 495,56"/>
+      <polygon class="flag" points="705,44 727,50 705,56"/>
+      <polygon class="flag" points="383,108 403,113 383,118"/>
+      <polygon class="flag" points="817,108 837,113 817,118"/>
+    </g>
+
+    <!-- poort -->
+    <path d="M572,340 L572,285 A28,28 0 0 1 628,285 L628,340 Z" fill="#0d0724"/>
+    <path d="M580,340 L580,290 A20,20 0 0 1 620,290 L620,340 Z" fill="#f6d77c" opacity=".9" filter="url(#glow)"/>
+
+    <!-- verlichte ramen -->
+    <g fill="#ffe28a" filter="url(#glow)">
+      <path class="win" d="M592,95 a8,8 0 0 1 16,0 v18 h-16z"/>
+      <path class="win" d="M592,135 a8,8 0 0 1 16,0 v18 h-16z"/>
+      <path class="win" d="M488,175 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M488,225 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M488,275 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M698,175 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M698,225 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M698,275 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M376,225 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M376,275 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M810,225 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M810,275 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M540,210 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M646,210 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M540,255 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M646,255 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M420,280 a7,7 0 0 1 14,0 v16 h-14z"/>
+      <path class="win" d="M766,280 a7,7 0 0 1 14,0 v16 h-14z"/>
+    </g>
+  </svg>
+</div>
+
+<!-- Fee (linksboven) -->
+<svg class="fig fairy" viewBox="0 0 120 150" aria-hidden="true">
+  <defs>
+    <radialGradient id="wingG" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#c9a7ff" stop-opacity=".35"/></radialGradient>
+    <linearGradient id="dressG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb3e0"/><stop offset="1" stop-color="#d94fa3"/></linearGradient>
+  </defs>
+  <g class="wing">
+    <ellipse cx="36" cy="68" rx="27" ry="18" fill="url(#wingG)" stroke="#efe6ff" stroke-width="1" transform="rotate(-28 36 68)"/>
+    <ellipse cx="40" cy="94" rx="18" ry="12" fill="url(#wingG)" stroke="#efe6ff" stroke-width="1" transform="rotate(22 40 94)"/>
+    <ellipse cx="84" cy="68" rx="27" ry="18" fill="url(#wingG)" stroke="#efe6ff" stroke-width="1" transform="rotate(28 84 68)"/>
+    <ellipse cx="80" cy="94" rx="18" ry="12" fill="url(#wingG)" stroke="#efe6ff" stroke-width="1" transform="rotate(-22 80 94)"/>
+  </g>
+  <path d="M60,60 L38,120 Q60,130 82,120 Z" fill="url(#dressG)"/>
+  <path d="M46,100 Q60,108 74,100" stroke="#fff" stroke-opacity=".6" stroke-width="2" fill="none"/>
+  <circle cx="52" cy="126" r="3.5" fill="#f6d77c"/><circle cx="68" cy="126" r="3.5" fill="#f6d77c"/>
+  <line x1="60" y1="72" x2="90" y2="50" stroke="#ffe0cf" stroke-width="6" stroke-linecap="round"/>
+  <line x1="60" y1="72" x2="36" y2="84" stroke="#ffe0cf" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="60" cy="46" r="16" fill="#ffe0cf"/>
+  <path d="M44,44 Q45,22 60,25 Q77,22 76,44 Q68,35 60,38 Q52,35 44,44Z" fill="#f6d77c"/>
+  <circle cx="60" cy="26" r="7" fill="#f6d77c"/>
+  <circle cx="54" cy="47" r="2" fill="#1a1230"/><circle cx="66" cy="47" r="2" fill="#1a1230"/>
+  <path d="M55,54 Q60,58 65,54" stroke="#c4577c" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <circle cx="50" cy="52" r="3" fill="#ffb3c6" opacity=".7"/><circle cx="70" cy="52" r="3" fill="#ffb3c6" opacity=".7"/>
+  <line x1="90" y1="50" x2="106" y2="28" stroke="#f6d77c" stroke-width="2.5" stroke-linecap="round"/>
+  <path class="wandStar" d="M106,16 l3.2,7 7.5,1 -5.4,5.2 1.3,7.5 -6.6,-3.6 -6.6,3.6 1.3,-7.5 -5.4,-5.2 7.5,-1z" fill="#fff8d6" filter="url(#glow)"/>
+</svg>
+
+<!-- Draakje (rechtsboven) -->
+<svg class="fig dragon" viewBox="0 0 190 130" aria-hidden="true">
+  <defs><linearGradient id="dragG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b48cf5"/><stop offset="1" stop-color="#6a3cc9"/></linearGradient></defs>
+  <path d="M42,82 Q8,92 14,60 Q17,48 30,52" stroke="#8a5fe0" stroke-width="11" fill="none" stroke-linecap="round"/>
+  <path d="M22,44 L38,50 L26,60 Z" fill="#ff9ad9"/>
+  <g class="dWing"><path d="M92,56 Q78,8 44,20 Q66,30 66,54 Z" fill="#d6c2ff" stroke="#8d5ee6" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M66,54 L60,26 M66,54 L52,22" stroke="#8d5ee6" stroke-width="1.5" opacity=".6"/></g>
+  <ellipse cx="92" cy="82" rx="48" ry="30" fill="url(#dragG)"/>
+  <g fill="#ff9ad9"><path d="M60,56 l6,-10 6,10z"/><path d="M76,52 l6,-11 6,11z"/><path d="M94,52 l6,-11 6,11z"/></g>
+  <ellipse cx="96" cy="94" rx="30" ry="14" fill="#efe4ff"/>
+  <ellipse cx="70" cy="108" rx="13" ry="8" fill="#5d34b8"/><ellipse cx="114" cy="108" rx="13" ry="8" fill="#5d34b8"/>
+  <circle cx="138" cy="52" r="25" fill="url(#dragG)"/>
+  <ellipse cx="156" cy="62" rx="17" ry="12" fill="#b48cf5"/>
+  <circle cx="163" cy="60" r="1.8" fill="#4a2596"/><circle cx="168" cy="63" r="1.8" fill="#4a2596"/>
+  <path d="M124,30 l4,-14 8,10z" fill="#f6d77c"/><path d="M144,28 l6,-13 5,12z" fill="#f6d77c"/>
+  <g class="blink"><circle cx="142" cy="46" r="8" fill="#fff"/><circle cx="144" cy="47" r="4.5" fill="#1a1230"/><circle cx="146" cy="45" r="1.6" fill="#fff"/></g>
+  <circle cx="150" cy="58" r="4" fill="#ff9ad9" opacity=".7"/>
+  <path d="M158,70 Q166,72 170,68" stroke="#4a2596" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <g class="breath" fill="#fff3c4" filter="url(#glow)">
+    <path d="M176,54 l2,4 4,.6 -3,3 .7,4.2 -3.7,-2 -3.7,2 .7,-4.2 -3,-3 4,-.6z"/>
+    <circle cx="180" cy="48" r="2.4" fill="#ff9ad9"/>
+    <path d="M178,60 l1.6,3.2 3.3,.5 -2.4,2.4 .6,3.4 -3.1,-1.6 -3.1,1.6 .6,-3.4 -2.4,-2.4 3.3,-.5z" fill="#8be9ff"/>
+  </g>
+</svg>
+
+<!-- Eenhoorn (linksonder) -->
+<svg class="fig unicorn" viewBox="0 0 185 150" aria-hidden="true">
+  <defs><linearGradient id="hornG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6cc"/><stop offset="1" stop-color="#d4a23a"/></linearGradient></defs>
+  <g class="tail">
+    <path d="M42,80 Q6,72 16,102 Q24,122 10,134" stroke="#ff9ad9" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M42,80 Q10,78 20,104 Q26,120 14,132" stroke="#c9a7ff" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M42,80 Q14,84 24,106" stroke="#8be9ff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </g>
+  <g fill="#fff"><rect x="52" y="100" width="13" height="38" rx="6"/><rect x="72" y="102" width="13" height="38" rx="6"/><rect x="104" y="102" width="13" height="38" rx="6"/><rect x="124" y="100" width="13" height="38" rx="6"/></g>
+  <g fill="#f6d77c"><rect x="52" y="132" width="13" height="7" rx="3"/><rect x="72" y="134" width="13" height="7" rx="3"/><rect x="104" y="134" width="13" height="7" rx="3"/><rect x="124" y="132" width="13" height="7" rx="3"/></g>
+  <ellipse cx="92" cy="90" rx="52" ry="31" fill="#fff"/>
+  <ellipse cx="96" cy="104" rx="36" ry="14" fill="#f4ecff"/>
+  <path d="M122,72 L138,26 L160,36 L146,84 Z" fill="#fff"/>
+  <ellipse cx="152" cy="36" rx="24" ry="17" fill="#fff" transform="rotate(-14 152 36)"/>
+  <ellipse cx="170" cy="44" rx="11" ry="8" fill="#ffe4f2"/>
+  <circle cx="174" cy="45" r="1.4" fill="#c4577c"/>
+  <path d="M140,22 l6,-14 8,12z" fill="#fff"/><path d="M143,22 l4,-9 5,8z" fill="#ffd1ea"/>
+  <path class="hornGlow" d="M150,20 L157,-6 L164,20Z" fill="#fff6cc" filter="url(#cglow)" opacity=".8"/>
+  <path d="M150,20 L157,-6 L164,20Z" fill="url(#hornG)"/>
+  <path d="M152,14 L162,12 M153,8 L161,6 M155,2 L160,1" stroke="#b8862b" stroke-width="1" opacity=".7"/>
+  <g stroke-linecap="round" fill="none" stroke-width="6">
+    <path d="M140,28 Q118,36 126,60 Q114,52 112,74" stroke="#ff9ad9"/>
+    <path d="M136,32 Q120,44 128,66 Q118,60 116,80" stroke="#f6d77c" stroke-width="5"/>
+    <path d="M132,38 Q124,52 130,72" stroke="#8be9ff" stroke-width="4"/>
+    <path d="M128,44 Q122,58 128,80" stroke="#c9a7ff" stroke-width="3.5"/>
+  </g>
+  <g class="blink"><ellipse cx="156" cy="36" rx="5" ry="5.5" fill="#1a1230"/><circle cx="158" cy="34" r="1.8" fill="#fff"/></g>
+  <path d="M150,30 l-3,-3 M148,35 l-4,-1" stroke="#1a1230" stroke-width="1.4" stroke-linecap="round"/>
+  <circle cx="166" cy="40" r="4" fill="#ffb3c6" opacity=".7"/>
+</svg>
+
+<!-- Tovenaarsuil (rechtsonder) -->
+<svg class="fig owl" viewBox="0 0 140 160" aria-hidden="true">
+  <defs><linearGradient id="hatG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f66e6"/><stop offset="1" stop-color="#3d1f80"/></linearGradient></defs>
+  <rect x="18" y="140" width="104" height="14" rx="3" fill="#8d4fd0"/><rect x="24" y="128" width="92" height="12" rx="3" fill="#d85a9c"/>
+  <path d="M22,147 H118 M28,134 H112" stroke="#fff" stroke-opacity=".5" stroke-width="1"/>
+  <rect x="28" y="120" width="84" height="8" rx="2" fill="#f6d77c"/>
+  <ellipse cx="70" cy="90" rx="38" ry="40" fill="#9b6a3a"/>
+  <ellipse cx="70" cy="100" rx="24" ry="27" fill="#f2d3a3"/>
+  <g fill="none" stroke="#d8ad70" stroke-width="1.5">
+    <path d="M52,92 q6,6 12,0 q6,6 12,0 q6,6 12,0"/><path d="M52,104 q6,6 12,0 q6,6 12,0 q6,6 12,0"/><path d="M52,116 q6,6 12,0 q6,6 12,0 q6,6 12,0"/>
+  </g>
+  <path d="M34,80 Q16,110 36,126 Q40,102 46,86Z" fill="#7a4d22"/><path d="M106,80 Q124,110 104,126 Q100,102 94,86Z" fill="#7a4d22"/>
+  <g class="blink"><circle cx="55" cy="72" r="13" fill="#fff"/><circle cx="57" cy="73" r="7" fill="#1a1230"/><circle cx="60" cy="70" r="2.5" fill="#fff"/></g>
+  <g class="blink"><circle cx="85" cy="72" r="13" fill="#fff"/><circle cx="87" cy="73" r="7" fill="#1a1230"/><circle cx="90" cy="70" r="2.5" fill="#fff"/></g>
+  <path d="M70,80 l-6,-2 6,13 6,-13z" fill="#f6b23a"/>
+  <ellipse cx="70" cy="56" rx="37" ry="7" fill="#2b1560"/>
+  <path d="M40,56 L100,56 L74,4 Z" fill="url(#hatG)"/>
+  <path d="M74,4 Q86,0 80,12" stroke="#c9a7ff" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <g fill="#f6d77c">
+    <path class="hatStar" d="M66,36 l2,4.4 4.8,.6 -3.5,3.3 .9,4.8 -4.2,-2.3 -4.2,2.3 .9,-4.8 -3.5,-3.3 4.8,-.6z"/>
+    <path class="hatStar" d="M80,24 l1.4,3 3.3,.4 -2.4,2.3 .6,3.3 -2.9,-1.6 -2.9,1.6 .6,-3.3 -2.4,-2.3 3.3,-.4z"/>
+  </g>
+  <path d="M56,128 l-4,8 h6z M62,128 l-2,8 h6z M78,128 l2,8 h-6z M84,128 l4,8 h-6z" fill="#f6b23a"/>
+  <rect x="118" y="100" width="6" height="8" fill="#8be9ff" opacity=".8"/>
+  <rect x="112" y="106" width="18" height="16" rx="6" fill="#8be9ff" opacity=".85" filter="url(#glow)"/>
+  <g fill="#fff">
+    <circle class="bubble" cx="118" cy="112" r="1.6"/><circle class="bubble" cx="123" cy="115" r="1.2"/><circle class="bubble" cx="120" cy="109" r="1"/>
+  </g>
+</svg>
+
+<!-- Vlinders -->
+<svg class="butterfly b1" viewBox="0 0 40 30" aria-hidden="true">
+  <g class="bwL"><path d="M19,15 Q2,-4 3,14 Q4,26 19,16Z" fill="#ff9ad9"/><circle cx="9" cy="12" r="2" fill="#fff" opacity=".8"/></g>
+  <g class="bwR"><path d="M21,15 Q38,-4 37,14 Q36,26 21,16Z" fill="#ff9ad9"/><circle cx="31" cy="12" r="2" fill="#fff" opacity=".8"/></g>
+  <rect x="18.5" y="7" width="3" height="16" rx="1.5" fill="#f6d77c"/>
+</svg>
+<svg class="butterfly b2" viewBox="0 0 40 30" aria-hidden="true">
+  <g class="bwL"><path d="M19,15 Q2,-4 3,14 Q4,26 19,16Z" fill="#8be9ff"/><circle cx="9" cy="12" r="2" fill="#fff" opacity=".8"/></g>
+  <g class="bwR"><path d="M21,15 Q38,-4 37,14 Q36,26 21,16Z" fill="#8be9ff"/><circle cx="31" cy="12" r="2" fill="#fff" opacity=".8"/></g>
+  <rect x="18.5" y="7" width="3" height="16" rx="1.5" fill="#f6d77c"/>
+</svg>
+
+<main>
+  <p class="greeting reveal">Lieve Lis, Daav, Fabian en Rome,</p>
+  <h1 class="reveal">Over <span id="daysWord">…</span> dagen is het zover!</h1>
+
+  <div class="reveal">
+    <div class="countdown" aria-live="polite">
+      <div class="unit"><div class="card" id="d">0</div><div class="label">dagen</div></div>
+      <div class="unit"><div class="card" id="h">00</div><div class="label">uren</div></div>
+      <div class="unit"><div class="card" id="m">00</div><div class="label">minuten</div></div>
+      <div class="unit"><div class="card" id="s">00</div><div class="label">seconden</div></div>
+    </div>
+    <div class="arrived">Het is zover! 🎉</div>
+  </div>
+
+  <div class="reveal">
+    <p class="tagline">Dan gaan wij met z'n allen naar Disneyland Parijs!</p>
+    <p class="when" id="whenText">21 februari 2027</p>
+  </div>
+
+  <div class="reveal">
+    <p class="who">Wie gaan er mee op sprookjesreis?</p>
+    <div class="cards">
+      <button class="ncard" style="--c:#ff9ad9"><span class="icon">🔑</span><span class="nm">Lis</span><span class="role">Hoeder van de Toversleutel</span></button>
+      <button class="ncard" style="--c:#8be9ff"><span class="icon">🛡️</span><span class="nm">Daav</span><span class="role">Held van de Toverberg</span></button>
+      <button class="ncard" style="--c:#c9a7ff"><span class="icon">🐉</span><span class="nm">Fabian</span><span class="role">Drakenvriend</span></button>
+      <button class="ncard" style="--c:#f6d77c"><span class="icon">⭐</span><span class="nm">Rome</span><span class="role">Sterrenwensvanger</span></button>
+      <button class="ncard grand" style="--c:#ffb3c6"><span class="icon">💖</span><span class="nm">Opa &amp; Oma</span><span class="role">De tovenaars achter dit sprookje</span></button>
+    </div>
+    <p class="hint">Tik op je naam voor jouw eigen vuurwerk ✨</p>
+  </div>
+
+  <div class="reveal">
+    <div class="frame">
+      <span class="corner tl">❦</span><span class="corner tr">❦</span><span class="corner bl">❦</span><span class="corner br">❦</span>
+      <div class="video" id="videoBox">
+        <a id="poster" class="poster" href="#" target="_blank" rel="noopener" aria-label="Bekijk de vuurwerkshow op YouTube">
+          <img id="posterImg" alt="" src="">
+          <span class="play">▶</span>
+          <span class="playText">Bekijk de vuurwerkshow ✨</span>
+        </a>
+      </div>
+    </div>
+    <p class="caption">Zo ziet het er straks 's avonds uit boven het kasteel…</p>
+    <p class="hint">Speelt de video niet? <a id="ytLink" href="#" target="_blank" rel="noopener" style="color:var(--gold)">Bekijk de vuurwerkshow op YouTube ✨</a></p>
+  </div>
+
+  <div class="thanks reveal">
+    <div class="big">Bedankt lieve opa en oma!</div>
+    <p class="sub">Jullie maken dit sprookje waar.</p>
+    <button class="heart" id="heartBtn" aria-label="Stuur een regen van hartjes">💖</button>
+    <p class="hint">Klik op het hart — en klik ergens in de lucht voor vuurwerk ✨</p>
+  </div>
+</main>
+
+<div class="toolbar">
+  <button class="tbtn" id="music" aria-pressed="false">🎵 Speeldoos</button>
+  <button class="tbtn" id="wand">🪄 Toverstaf</button>
+</div>
+
+<script>
+/* =====================  AANPASSEN  ===================== */
+const TARGET_DATE = new Date(2027, 1, 21, 0, 0, 0);   // 21 februari 2027 (maand 1 = februari)
+const YOUTUBE_ID  = "LSbBx4FGTY8";                      // vervang door een andere YouTube-video-ID als je wilt
+/* ======================================================= */
+
+const watchUrl = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
+document.getElementById('ytLink').href = watchUrl;
+document.getElementById('poster').href = watchUrl;
+document.getElementById('posterImg').src = `https://img.youtube.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`;
+
+// Ingebedde YouTube-speler werkt alleen als de pagina online staat (http/https).
+// Lokaal geopend (file://) geeft YouTube fout 153 → dan tonen we de poster met afspeelknop.
+if(location.protocol === 'http:' || location.protocol === 'https:'){
+  const box = document.getElementById('videoBox');
+  const ifr = document.createElement('iframe');
+  ifr.src = `https://www.youtube.com/embed/${YOUTUBE_ID}?rel=0&modestbranding=1`;
+  ifr.title = 'Vuurwerkshow Disneyland Parijs';
+  ifr.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
+  ifr.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+  ifr.setAttribute('allowfullscreen','');
+  box.innerHTML = ''; box.appendChild(ifr);
+}
+document.getElementById('whenText').textContent =
+  TARGET_DATE.toLocaleDateString('nl-NL', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- aftellen ---------- */
+const els = {d:document.getElementById('d'), h:document.getElementById('h'), m:document.getElementById('m'), s:document.getElementById('s')};
+const daysWord = document.getElementById('daysWord');
+let arrivedFired = false;
+function setCard(el, val){
+  if(el.textContent !== val){
+    el.textContent = val;
+    if(!reduced){ el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); }
+  }
+}
+function tick(){
+  const now = new Date();
+  let diff = TARGET_DATE - now;
+  if(diff <= 0){
+    document.body.classList.add('arrived');
+    document.querySelector('h1').textContent = 'Vandaag is het zover!';
+    if(!arrivedFired && document.body.classList.contains('revealed')){ arrivedFired = true; volley(24); }
+    return;
+  }
+  const d = Math.floor(diff/86400000); diff -= d*86400000;
+  const h = Math.floor(diff/3600000);  diff -= h*3600000;
+  const m = Math.floor(diff/60000);    diff -= m*60000;
+  const s = Math.floor(diff/1000);
+  setCard(els.d, String(d));
+  setCard(els.h, String(h).padStart(2,'0'));
+  setCard(els.m, String(m).padStart(2,'0'));
+  setCard(els.s, String(s).padStart(2,'0'));
+  daysWord.textContent = d;
+  document.querySelector('h1').innerHTML = d === 1 ? 'Nog maar <span id="daysWord">1</span> dag!' : `Over <span id="daysWord">${d}</span> dagen is het zover!`;
+}
+tick(); setInterval(tick, 1000);
+
+/* ---------- sterrenhemel ---------- */
+const sky = document.getElementById('sky'), sctx = sky.getContext('2d');
+const fx  = document.getElementById('fx'),  fctx = fx.getContext('2d');
+let W=0, H=0, DPR=1, stars=[], shooters=[];
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  for(const c of [sky,fx]){ c.width = W*DPR; c.height = H*DPR; c.getContext('2d').setTransform(DPR,0,0,DPR,0,0); }
+  stars = Array.from({length: Math.round(W*H/5500)}, () => ({
+    x:Math.random()*W, y:Math.random()*H*0.85, r:Math.random()*1.4+0.3,
+    p:Math.random()*Math.PI*2, sp:Math.random()*1.5+0.5,
+    c: Math.random()<0.15 ? '#ffd9ee' : (Math.random()<0.3 ? '#fff2c4' : '#ffffff')
+  }));
+}
+window.addEventListener('resize', resize); resize();
+
+function spawnShooter(){
+  shooters.push({x:Math.random()*W*0.8, y:Math.random()*H*0.35, vx:9+Math.random()*5, vy:3+Math.random()*2, life:1});
+  setTimeout(spawnShooter, 2500+Math.random()*5000);
+}
+if(!reduced) setTimeout(spawnShooter, 1500);
+
+function drawSky(t){
+  sctx.clearRect(0,0,W,H);
+  for(const s of stars){
+    const tw = reduced ? 1 : 0.55 + 0.45*Math.sin(t/900*s.sp + s.p);
+    sctx.globalAlpha = tw;
+    sctx.fillStyle = s.c;
+    sctx.beginPath(); sctx.arc(s.x, s.y, s.r, 0, Math.PI*2); sctx.fill();
+    if(s.r>1.2){ // kleine kruisjes voor grotere sterren
+      sctx.globalAlpha = tw*0.5; sctx.fillRect(s.x-s.r*3, s.y-0.3, s.r*6, 0.6); sctx.fillRect(s.x-0.3, s.y-s.r*3, 0.6, s.r*6);
+    }
+  }
+  sctx.globalAlpha = 1;
+  for(let i=shooters.length-1;i>=0;i--){
+    const s = shooters[i];
+    const g = sctx.createLinearGradient(s.x, s.y, s.x - s.vx*10, s.y - s.vy*10);
+    g.addColorStop(0,'rgba(255,255,255,'+s.life+')'); g.addColorStop(1,'rgba(255,255,255,0)');
+    sctx.strokeStyle = g; sctx.lineWidth = 2; sctx.lineCap='round';
+    sctx.beginPath(); sctx.moveTo(s.x,s.y); sctx.lineTo(s.x - s.vx*10, s.y - s.vy*10); sctx.stroke();
+    s.x += s.vx; s.y += s.vy; s.life -= 0.012;
+    if(s.life<=0 || s.x>W+100) shooters.splice(i,1);
+  }
+}
+
+/* ---------- vuurwerk, glitter & toverstof ---------- */
+const rockets=[], parts=[], dust=[];
+const palette = ['#f6d77c','#ff9ad9','#c9a7ff','#8be9ff','#ffffff','#ffb36b'];
+for(let i=0;i<45;i++) dust.push({x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.6+0.6, vy:-(0.15+Math.random()*0.35), vx:(Math.random()-0.5)*0.2, p:Math.random()*6});
+
+function launch(tx, ty, color){
+  const c = color || palette[Math.floor(Math.random()*palette.length)];
+  if(reduced){ burst(tx, ty, c); return; }
+  const sx = tx + (Math.random()-0.5)*120;
+  rockets.push({x:sx, y:H, tx, ty, vx:(tx-sx)/38, vy:-(H-ty)/38 - 1, c});
+}
+function burst(x, y, color){
+  const c = color || palette[Math.floor(Math.random()*palette.length)];
+  const n = 70 + Math.floor(Math.random()*40);
+  const ring = Math.random()<0.4;
+  for(let i=0;i<n;i++){
+    const a = (i/n)*Math.PI*2 + Math.random()*0.1;
+    const sp = ring ? 4.2+Math.random()*0.4 : 1.5+Math.random()*4;
+    parts.push({x, y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, life:1, decay:0.008+Math.random()*0.012, c: Math.random()<0.2 ? '#ffffff' : c, r:1.4+Math.random()*1.4, spark: Math.random()<0.25});
+  }
+}
+function volley(n){
+  for(let i=0;i<n;i++) setTimeout(()=>launch(W*0.15+Math.random()*W*0.7, H*0.12+Math.random()*H*0.35), i*180);
+}
+function sparkle(x,y){
+  for(let i=0;i<3;i++) parts.push({x, y, vx:(Math.random()-0.5)*1.6, vy:(Math.random()-0.5)*1.6-0.4, life:1, decay:0.03+Math.random()*0.03, c:Math.random()<0.5?'#f6d77c':'#ffffff', r:1+Math.random()*1.4, spark:true, noGravity:true});
+}
+
+function drawFx(t){
+  fctx.globalCompositeOperation='destination-out';
+  fctx.fillStyle='rgba(0,0,0,0.22)'; fctx.fillRect(0,0,W,H);
+  fctx.globalCompositeOperation='lighter';
+
+  // toverstof
+  for(const d of dust){
+    d.x += d.vx + Math.sin(t/1500 + d.p)*0.15; d.y += d.vy;
+    if(d.y < -5){ d.y = H+5; d.x = Math.random()*W; }
+    fctx.globalAlpha = 0.35 + 0.35*Math.sin(t/700 + d.p);
+    fctx.fillStyle = '#ffe9a6'; fctx.beginPath(); fctx.arc(d.x, d.y, d.r, 0, Math.PI*2); fctx.fill();
+  }
+  fctx.globalAlpha = 1;
+
+  for(let i=rockets.length-1;i>=0;i--){
+    const r = rockets[i];
+    fctx.fillStyle = r.c; fctx.beginPath(); fctx.arc(r.x, r.y, 2.2, 0, Math.PI*2); fctx.fill();
+    parts.push({x:r.x, y:r.y, vx:(Math.random()-0.5)*0.6, vy:Math.random()*0.8, life:0.7, decay:0.05, c:'#ffe9a6', r:1, spark:true, noGravity:true});
+    r.x += r.vx; r.y += r.vy; r.vy += 0.03;
+    if(r.vy >= -0.2 || r.y <= r.ty){ rockets.splice(i,1); burst(r.x, r.y, r.c); }
+  }
+  for(let i=parts.length-1;i>=0;i--){
+    const p = parts[i];
+    p.x += p.vx; p.y += p.vy;
+    if(!p.noGravity){ p.vy += 0.045; p.vx *= 0.985; p.vy *= 0.985; }
+    p.life -= p.decay;
+    if(p.life<=0){ parts.splice(i,1); continue; }
+    fctx.globalAlpha = p.spark ? p.life * (0.4+0.6*Math.random()) : p.life;
+    fctx.fillStyle = p.c;
+    fctx.beginPath(); fctx.arc(p.x, p.y, p.r, 0, Math.PI*2); fctx.fill();
+  }
+  fctx.globalAlpha = 1;
+  fctx.globalCompositeOperation='source-over';
+}
+
+function loop(t){ drawSky(t); drawFx(t); requestAnimationFrame(loop); }
+requestAnimationFrame(loop);
+
+/* ---------- interactie ---------- */
+let autoTimer=null;
+function startShow(){
+  volley(14);
+  if(!reduced) autoTimer = setInterval(()=>launch(W*0.1+Math.random()*W*0.8, H*0.1+Math.random()*H*0.4), 1900);
+}
+document.getElementById('openBook').addEventListener('click', () => {
+  document.getElementById('intro').classList.add('open');
+  document.body.classList.add('revealed');
+  startShow();
+});
+document.getElementById('wand').addEventListener('click', () => volley(12));
+
+/* ---------- toverkaarten: eigen vuurwerk per naam ---------- */
+document.querySelectorAll('.ncard').forEach(card => {
+  card.addEventListener('click', () => {
+    const c = getComputedStyle(card).getPropertyValue('--c').trim();
+    const r = card.getBoundingClientRect();
+    card.classList.remove('pop'); void card.offsetWidth; card.classList.add('pop');
+    for(let i=0;i<6;i++) setTimeout(()=>launch(r.left + r.width/2 + (Math.random()-0.5)*260, Math.max(80, r.top - 120 - Math.random()*160), c), i*160);
+    for(let i=0;i<14;i++) sparkle(r.left + Math.random()*r.width, r.top + Math.random()*r.height);
+  });
+});
+
+/* ---------- speeldoos (eigen melodie, Web Audio) ---------- */
+const BEAT = 0.62;
+const MEL = [ // [toon, tellen] — een eigen sprookjeswals in D
+  [74,1],[78,1],[81,1],[86,2],[83,1],[81,1],[78,1],[74,1],[76,3],
+  [76,1],[79,1],[83,1],[86,2],[81,1],[79,1],[78,1],[76,1],[74,3],
+  [81,1],[83,1],[86,1],[88,2],[86,1],[83,1],[81,1],[78,1],[79,3],
+  [79,1],[78,1],[76,1],[74,1],[73,1],[74,1],[76,1],[78,1],[76,1],[74,3]
+];
+const CHORDS = ['D','D','D','A','G','D','A','D','D','G','D','G','A','A','A','D'];
+const CH = {D:[50,[66,69]], G:[55,[67,71]], A:[57,[61,64]]};
+const freq = m => 440*Math.pow(2,(m-69)/12);
+let ac=null, master=null, loopTimer=null, nextT=0, musicOn=false;
+
+function ping(midi, t, vol, dur){
+  const o = ac.createOscillator(), o2 = ac.createOscillator(), g = ac.createGain(), g2 = ac.createGain();
+  o.type='sine'; o.frequency.value = freq(midi);
+  o2.type='sine'; o2.frequency.value = freq(midi)*4; g2.gain.value = 0.1;
+  o2.connect(g2); g2.connect(g); o.connect(g); g.connect(master);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol, t+0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  o.start(t); o2.start(t); o.stop(t+dur+0.05); o2.stop(t+dur+0.05);
+}
+function scheduleLoop(t0){
+  let t = t0;
+  for(const [m,b] of MEL){ ping(m, t, 0.5, Math.min(b*BEAT*1.5, 2.4)); t += b*BEAT; }
+  CHORDS.forEach((c,i) => {
+    const [root,[a,b]] = CH[c], bt = t0 + i*3*BEAT;
+    ping(root, bt, 0.26, 1.5); ping(a, bt+BEAT, 0.13, 0.9); ping(b, bt+2*BEAT, 0.13, 0.9);
+  });
+  return 48*BEAT;
+}
+function runLoop(){
+  const dur = scheduleLoop(nextT); nextT += dur;
+  loopTimer = setTimeout(runLoop, (nextT - ac.currentTime - 1.5)*1000);
+}
+function startMusic(){
+  ac = new (window.AudioContext || window.webkitAudioContext)();
+  master = ac.createGain(); master.gain.value = 0;
+  const delay = ac.createDelay(1); delay.delayTime.value = 0.37;
+  const fb = ac.createGain(); fb.gain.value = 0.32;
+  const wet = ac.createGain(); wet.gain.value = 0.22;
+  master.connect(ac.destination);
+  master.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(ac.destination);
+  master.gain.setTargetAtTime(0.32, ac.currentTime, 0.6);
+  nextT = ac.currentTime + 0.15; runLoop();
+}
+function stopMusic(){
+  clearTimeout(loopTimer);
+  const old = ac; master.gain.setTargetAtTime(0, ac.currentTime, 0.4);
+  setTimeout(() => old.close(), 1500);
+  ac = null; master = null;
+}
+const musicBtn = document.getElementById('music');
+musicBtn.addEventListener('click', () => {
+  musicOn = !musicOn;
+  musicOn ? startMusic() : stopMusic();
+  musicBtn.textContent = musicOn ? '🎶 Speeldoos aan' : '🎵 Speeldoos';
+  musicBtn.classList.toggle('on', musicOn);
+  musicBtn.setAttribute('aria-pressed', String(musicOn));
+});
+
+document.addEventListener('pointerdown', e => {
+  if(!document.body.classList.contains('revealed')) return;
+  if(e.target.closest('button, iframe, a')) return;
+  launch(e.clientX, e.clientY);
+});
+let lastMove=0;
+document.addEventListener('pointermove', e => {
+  if(reduced || !document.body.classList.contains('revealed')) return;
+  const now = performance.now(); if(now-lastMove<28) return; lastMove=now;
+  sparkle(e.clientX, e.clientY);
+});
+
+const heartEmoji = ['💖','💗','✨','💕','⭐','💫'];
+document.getElementById('heartBtn').addEventListener('click', e => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  for(let i=0;i<22;i++){
+    const el = document.createElement('span');
+    el.className='floatheart'; el.textContent = heartEmoji[Math.floor(Math.random()*heartEmoji.length)];
+    el.style.left = (rect.left + rect.width/2 + (Math.random()-0.5)*80) + 'px';
+    el.style.top  = (rect.top + rect.height/2) + 'px';
+    el.style.setProperty('--dx', ((Math.random()-0.5)*360)+'px');
+    el.style.setProperty('--rot', ((Math.random()-0.5)*90)+'deg');
+    el.style.animationDelay = (Math.random()*0.5)+'s';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 3300);
+  }
+  volley(5);
+});
+</script>
+</body>
+</html>
