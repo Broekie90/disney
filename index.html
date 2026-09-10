@@ -155,6 +155,10 @@
   .ncard.baby .icon{animation:cradle 2.6s ease-in-out infinite}
   @keyframes cradle{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
   .ncard .mini{display:block;font-size:12.5px;font-style:italic;color:rgba(255,255,255,.75);margin-top:6px}
+  .ncard.plain{cursor:default;width:clamp(150px,22vw,200px)}
+  .ncard.plain:hover{transform:none;box-shadow:0 0 22px color-mix(in srgb,var(--c) 30%,transparent),0 14px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.15)}
+  .ncard.plain .icon{animation:none}
+  .ncard.plain .nm{font-size:clamp(26px,3.6vw,34px)}
   .ncard.pop{animation:cardPop .5s ease}
   @keyframes cardPop{0%{transform:scale(1)}40%{transform:scale(1.12) rotate(-2deg)}100%{transform:scale(1)}}
 
@@ -723,6 +727,7 @@
       <button class="ncard" style="--c:#c9a7ff"><span class="icon">🐉</span><span class="nm">Fabian</span><span class="role">Drakenvriend</span></button>
       <button class="ncard" style="--c:#f6d77c"><span class="icon">⭐</span><span class="nm">Rome</span><span class="role">Sterrenwensvanger</span></button>
       <button class="ncard baby" style="--c:#c6f7d9" data-mix="#ff9ad9,#8be9ff"><span class="icon">🍼</span><span class="nm">Baby</span><span class="role">Ons kleinste wondertje op komst — naam &amp; verrassing nog geheim</span><span class="mini">roze of blauw? tik maar! 💗💙</span></button>
+      <div class="ncard plain" style="--c:#d9c6ff"><span class="icon">🧳</span><span class="nm">Het Reisgezelschap</span><span class="role">Berjan, Loes, Arjen, Denise &amp; Rob — de Ridders van de Koninklijke Karavaan</span></div>
       <button class="ncard grand" style="--c:#ffb3c6"><span class="icon">💖</span><span class="nm">Opa &amp; Oma</span><span class="role">De tovenaars achter dit sprookje</span></button>
     </div>
     <p class="hint">Tik op je naam voor jouw eigen vuurwerk ✨ (en ja, ook de baby doet al mee!)</p>
@@ -1473,7 +1478,7 @@ document.querySelectorAll('.gallery').forEach(gal => {
 });
 
 /* ---------- toverkaarten: eigen vuurwerk per naam ---------- */
-document.querySelectorAll('.ncard').forEach(card => {
+document.querySelectorAll('button.ncard').forEach(card => {
   card.addEventListener('click', () => {
     const base = getComputedStyle(card).getPropertyValue('--c').trim();
     const mix = card.dataset.mix ? card.dataset.mix.split(',') : [base];
