@@ -151,6 +151,10 @@
   .ncard .nm{display:block;font-family:'Great Vibes',cursive;font-size:clamp(30px,4.5vw,42px);color:var(--c);text-shadow:0 0 16px color-mix(in srgb,var(--c) 70%,transparent);line-height:1.1;margin-top:4px}
   .ncard .role{display:block;font-style:italic;font-size:clamp(14px,1.8vw,17px);color:var(--lilac);margin-top:4px;line-height:1.25}
   .ncard.grand{width:clamp(200px,32vw,300px)}
+  .ncard.baby{background:linear-gradient(160deg,rgba(60,32,110,.55),rgba(18,10,50,.9)),linear-gradient(135deg,rgba(255,154,217,.18),rgba(139,233,255,.18))}
+  .ncard.baby .icon{animation:cradle 2.6s ease-in-out infinite}
+  @keyframes cradle{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+  .ncard .mini{display:block;font-size:12.5px;font-style:italic;color:rgba(255,255,255,.75);margin-top:6px}
   .ncard.pop{animation:cardPop .5s ease}
   @keyframes cardPop{0%{transform:scale(1)}40%{transform:scale(1.12) rotate(-2deg)}100%{transform:scale(1)}}
 
@@ -693,7 +697,7 @@
 </svg>
 
 <main>
-  <p class="greeting reveal">Lieve Familie Allemaal!</p>
+  <p class="greeting reveal">Lieve allemaal,</p>
   <h1 class="reveal">Over <span id="daysWord">…</span> dagen is het zover!</h1>
 
   <div class="reveal">
@@ -718,9 +722,10 @@
       <button class="ncard" style="--c:#8be9ff"><span class="icon">🛡️</span><span class="nm">Daav</span><span class="role">Held van de Toverberg</span></button>
       <button class="ncard" style="--c:#c9a7ff"><span class="icon">🐉</span><span class="nm">Fabian</span><span class="role">Drakenvriend</span></button>
       <button class="ncard" style="--c:#f6d77c"><span class="icon">⭐</span><span class="nm">Rome</span><span class="role">Sterrenwensvanger</span></button>
+      <button class="ncard baby" style="--c:#c6f7d9" data-mix="#ff9ad9,#8be9ff"><span class="icon">🍼</span><span class="nm">Baby</span><span class="role">Ons kleinste wondertje op komst — naam &amp; verrassing nog geheim</span><span class="mini">roze of blauw? tik maar! 💗💙</span></button>
       <button class="ncard grand" style="--c:#ffb3c6"><span class="icon">💖</span><span class="nm">Opa &amp; Oma</span><span class="role">De tovenaars achter dit sprookje</span></button>
     </div>
-    <p class="hint">Tik op je naam voor jouw eigen vuurwerk ✨</p>
+    <p class="hint">Tik op je naam voor jouw eigen vuurwerk ✨ (en ja, ook de baby doet al mee!)</p>
   </div>
 
   <div class="reveal">
@@ -1470,10 +1475,11 @@ document.querySelectorAll('.gallery').forEach(gal => {
 /* ---------- toverkaarten: eigen vuurwerk per naam ---------- */
 document.querySelectorAll('.ncard').forEach(card => {
   card.addEventListener('click', () => {
-    const c = getComputedStyle(card).getPropertyValue('--c').trim();
+    const base = getComputedStyle(card).getPropertyValue('--c').trim();
+    const mix = card.dataset.mix ? card.dataset.mix.split(',') : [base];
     const r = card.getBoundingClientRect();
     card.classList.remove('pop'); void card.offsetWidth; card.classList.add('pop');
-    for(let i=0;i<6;i++) setTimeout(()=>launch(r.left + r.width/2 + (Math.random()-0.5)*260, Math.max(80, r.top - 120 - Math.random()*160), c), i*160);
+    for(let i=0;i<6;i++) setTimeout(()=>launch(r.left + r.width/2 + (Math.random()-0.5)*260, Math.max(80, r.top - 120 - Math.random()*160), mix[i % mix.length]), i*160);
     for(let i=0;i<14;i++) sparkle(r.left + Math.random()*r.width, r.top + Math.random()*r.height);
   });
 });
@@ -1571,4 +1577,3 @@ document.getElementById('heartBtn').addEventListener('click', e => {
 </script>
 </body>
 </html>
-
